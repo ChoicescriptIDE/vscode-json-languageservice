@@ -1,0 +1,29 @@
+name: sync-upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Sync upstream'
+        default: 'Default Workflow'
+        required: true
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Merge upstream
+        run: |
+          git config --global user.name 'automerge'
+          git config --global user.email ''
+
+          git remote add upstream https://github.com/Microsoft/${{ github.repository.name }}
+          git fetch upstream
+
+          git merge --no-edit upstream/master
+          git push origin master

@@ -31,6 +31,7 @@ export {
 export enum ErrorCode {
 	Undefined = 0,
 	EnumValueMismatch = 1,
+	Deprecated = 2,
 	UnexpectedEndOfComment = 0x101,
 	UnexpectedEndOfString = 0x102,
 	UnexpectedEndOfNumber = 0x103,
@@ -128,6 +129,16 @@ export interface DocumentLanguageSettings {
 	 * The severity of reported trailing commas. If not set, trailing commas will be reported as errors.
 	 */
 	trailingCommas?: SeverityLevel;
+
+	/**
+	 * The severity of problems from schema validation. If set to 'ignore', schema validation will be skipped. If not set, 'warning' is used. 
+	 */
+	schemaValidation?: SeverityLevel;
+
+	/**
+	 * The severity of problems that occurred when resolving and loading schemas. If set to 'ignore', schema resolving problems are not reported. If not set, 'warning' is used. 
+	 */
+	schemaRequest?: SeverityLevel;
 }
 
 export interface SchemaConfiguration {

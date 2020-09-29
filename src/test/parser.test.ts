@@ -7,6 +7,7 @@ import * as assert from 'assert';
 import { getNodePath, getNodeValue, JSONDocument } from '../parser/jsonParser';
 import * as JsonSchema from '../jsonSchema';
 import { TextDocument, Range, ErrorCode, ASTNode, ObjectASTNode, getLanguageService } from '../jsonLanguageService';
+import { DiagnosticSeverity } from '../jsonLanguageTypes';
 
 suite('JSON Parser', () => {
 
@@ -1960,5 +1961,6 @@ suite('JSON Parser', () => {
 		assert.strictEqual(res.length, 1);
 		assert.strictEqual(res[0].message, 'Missing property "foo".');
 	});
+
 
 });

@@ -51,21 +51,23 @@ export class JSONValidation {
 		const getDiagnostics = (schema: ResolvedSchema | undefined) => {
 			let trailingCommaSeverity = documentSettings ? toDiagnosticSeverity(documentSettings.trailingCommas) : DiagnosticSeverity.Error;
 			let commentSeverity = documentSettings ? toDiagnosticSeverity(documentSettings.comments) : this.commentSeverity;
+			let schemaValidation = documentSettings?.schemaValidation ? toDiagnosticSeverity(documentSettings.schemaValidation) : DiagnosticSeverity.Warning;
+			let schemaRequest = documentSettings?.schemaRequest ? toDiagnosticSeverity(documentSettings.schemaRequest) : DiagnosticSeverity.Warning;
 
 			if (schema) {
-				if (schema.errors.length && jsonDocument.root) {
+				if (schema.errors.length && jsonDocument.root && schemaRequest) {
 					const astRoot = jsonDocument.root;
 					const property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
 					if (property && property.keyNode.value === '$schema') {
 						const node = property.valueNode || property;
 						const range = Range.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
-						addProblem(Diagnostic.create(range, schema.errors[0], DiagnosticSeverity.Warning, ErrorCode.SchemaResolveError));
+						addProblem(Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
 					} else {
 						const range = Range.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
-						addProblem(Diagnostic.create(range, schema.errors[0], DiagnosticSeverity.Warning, ErrorCode.SchemaResolveError));
+						addProblem(Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
 					}
-				} else {
-					const semanticErrors = jsonDocument.validate(textDocument, schema.schema);
+				} else if (schemaValidation) {
+					const semanticErrors = jsonDocument.validate(textDocument, schema.schema, schemaValidation);
 					if (semanticErrors) {
 						semanticErrors.forEach(addProblem);
 					}

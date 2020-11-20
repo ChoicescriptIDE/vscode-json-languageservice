@@ -10,7 +10,7 @@ import {
 	Diagnostic, DiagnosticSeverity,
 	CompletionItem, CompletionItemKind, CompletionList, Position,
 	InsertTextFormat, MarkupContent,
-	SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions, DefinitionLink
+	SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions as LSPFormattingOptions, DefinitionLink
 } from 'vscode-languageserver-types';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -22,7 +22,7 @@ export {
 	Diagnostic, DiagnosticSeverity,
 	CompletionItem, CompletionItemKind, CompletionList, Position,
 	InsertTextFormat, MarkupContent, MarkupKind, DefinitionLink,
-	SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions
+	SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString
 };
 
 /**
@@ -177,7 +177,7 @@ export interface PromiseConstructor {
 	 * a resolve callback used resolve the promise with a value or the result of another promise,
 	 * and a reject callback used to reject the promise with a provided reason or error.
 	 */
-	new <T>(executor: (resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => void): Thenable<T>;
+	new <T>(executor: (resolve: (value?: T | Thenable<T | undefined>) => void, reject: (reason?: any) => void) => void): Thenable<T | undefined>;
 
 	/**
 	 * Creates a Promise that is resolved with an array of results when all of the provided Promises
@@ -324,4 +324,8 @@ export interface ColorInformationContext {
 	 * Called when the result was cropped.
 	 */
 	onResultLimitExceeded?: (uri: string) => void;
+}
+
+export interface FormattingOptions extends LSPFormattingOptions {
+	insertFinalNewline?: boolean;
 }

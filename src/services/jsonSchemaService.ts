@@ -446,6 +446,7 @@ export class JSONSchemaService implements IJSONSchemaService {
 					const loc = refSegment ? uri + '#' + refSegment : uri;
 					resolveErrors.push(localize('json.schema.problemloadingref', 'Problems loading reference \'{0}\': {1}', loc, unresolvedSchema.errors[0]));
 				}
+				delete node.$ref;
 				merge(node, unresolvedSchema.schema, uri, refSegment);
 				return resolveRefs(node, unresolvedSchema.schema, uri, referencedHandle.dependencies);
 			});
@@ -497,13 +498,13 @@ export class JSONSchemaService implements IJSONSchemaService {
 				while (next.$ref) {
 					const ref = next.$ref;
 					const segments = ref.split('#', 2);
-					delete next.$ref;
 					if (segments[0].length > 0) {
 						openPromises.push(resolveExternalLink(next, segments[0], segments[1], parentSchemaURL, parentSchemaDependencies));
 						return;
 					} else {
+						delete next.$ref;
 						if (seenRefs.indexOf(ref) === -1) {
-							merge(next, parentSchema, parentSchemaURL, segments[1]); // can set next.$ref again, use seenRefs to avoid circle
+							merge(next, parentSchema, parentSchemaURL, segments[1]); // will remove $ref, can set next.$ref again, use seenRefs to avoid circle
 							seenRefs.push(ref);
 						}
 					}
@@ -554,8 +555,9 @@ export class JSONSchemaService implements IJSONSchemaService {
 
 		const seen: { [schemaId: string]: boolean } = Object.create(null);
 		const schemas: string[] = [];
+		const normalizedResource = normalizeResourceForMatching(resource);
 		for (const entry of this.filePatternAssociations) {
-			if (entry.matchesPattern(resource)) {
+			if (entry.matchesPattern(normalizedResource)) {
 				for (const schemaId of entry.getURIs()) {
 					if (!seen[schemaId]) {
 						schemas.push(schemaId);
@@ -608,6 +610,15 @@ function normalizeId(id: string): string {
 		return id;
 	}
 
+}
+
+function normalizeResourceForMatching(resource: string): string {
+	// remove querues and fragments, normalize drive capitalization
+	try {
+		return URI.parse(resource).with({ fragment: null, query: null }).toString();
+	} catch (e) {
+		return resource;
+	}
 }
 
 function toDisplayString(url: string) {

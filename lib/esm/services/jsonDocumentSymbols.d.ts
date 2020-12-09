@@ -8,6 +8,7 @@ export declare class JSONDocumentSymbols {
     findDocumentSymbols2(document: TextDocument, doc: Parser.JSONDocument, context?: DocumentSymbolsContext): DocumentSymbol[];
     private getSymbolKind;
     private getKeyLabel;
+    private getDetail;
     findDocumentColors(document: TextDocument, doc: Parser.JSONDocument, context?: DocumentSymbolsContext): Thenable<ColorInformation[]>;
     getColorPresentations(document: TextDocument, doc: Parser.JSONDocument, color: Color, range: Range): ColorPresentation[];
 }

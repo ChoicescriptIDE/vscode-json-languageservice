@@ -1,8 +1,8 @@
 import { JSONWorkerContribution, JSONPath, Segment, CompletionsCollector } from './jsonContributions';
 import { JSONSchema } from './jsonSchema';
-import { Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, MarkupKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions, DefinitionLink } from 'vscode-languageserver-types';
+import { Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, MarkupKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions as LSPFormattingOptions, DefinitionLink } from 'vscode-languageserver-types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-export { TextDocument, Range, TextEdit, JSONSchema, JSONWorkerContribution, JSONPath, Segment, CompletionsCollector, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, DefinitionLink, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions };
+export { TextDocument, Range, TextEdit, JSONSchema, JSONWorkerContribution, JSONPath, Segment, CompletionsCollector, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, DefinitionLink, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString };
 /**
  * Error codes used by diagnostics
  */
@@ -129,8 +129,8 @@ export interface WorkspaceContextService {
     resolveRelativePath(relativePath: string, resource: string): string;
 }
 /**
- * The schema request service is used to fetch schemas. The result should the schema file comment, or,
- * in case of an error, a displayable error string
+ * The schema request service is used to fetch schemas. If successful, returns a resolved promise with the content of the schema.
+ * In case of an error, returns a rejected promise with a displayable error string.
  */
 export interface SchemaRequestService {
     (uri: string): Thenable<string>;
@@ -142,7 +142,7 @@ export interface PromiseConstructor {
      * a resolve callback used resolve the promise with a value or the result of another promise,
      * and a reject callback used to reject the promise with a provided reason or error.
      */
-    new <T>(executor: (resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => void): Thenable<T>;
+    new <T>(executor: (resolve: (value?: T | Thenable<T | undefined>) => void, reject: (reason?: any) => void) => void): Thenable<T | undefined>;
     /**
      * Creates a Promise that is resolved with an array of results when all of the provided Promises
      * resolve, or rejected when any Promise is rejected.
@@ -268,4 +268,7 @@ export interface ColorInformationContext {
      * Called when the result was cropped.
      */
     onResultLimitExceeded?: (uri: string) => void;
+}
+export interface FormattingOptions extends LSPFormattingOptions {
+    insertFinalNewline?: boolean;
 }

@@ -1,4 +1,5 @@
 import { Thenable, ASTNode, Color, ColorInformation, ColorPresentation, LanguageServiceParams, LanguageSettings, DocumentLanguageSettings, FoldingRange, JSONSchema, SelectionRange, FoldingRangesContext, DocumentSymbolsContext, ColorInformationContext as DocumentColorsContext, TextDocument, Position, CompletionItem, CompletionList, Hover, Range, SymbolInformation, Diagnostic, TextEdit, FormattingOptions, DocumentSymbol, DefinitionLink, MatchingSchema } from './jsonLanguageTypes';
+import { DocumentLink } from 'vscode-languageserver-types';
 export declare type JSONDocument = {
     root: ASTNode | undefined;
     getNodeFromOffset(offset: number, includeRightBound?: boolean): ASTNode | undefined;
@@ -24,5 +25,6 @@ export interface LanguageService {
     getFoldingRanges(document: TextDocument, context?: FoldingRangesContext): FoldingRange[];
     getSelectionRanges(document: TextDocument, positions: Position[], doc: JSONDocument): SelectionRange[];
     findDefinition(document: TextDocument, position: Position, doc: JSONDocument): Thenable<DefinitionLink[]>;
+    findLinks(document: TextDocument, doc: JSONDocument): Thenable<DocumentLink[]>;
 }
 export declare function getLanguageService(params: LanguageServiceParams): LanguageService;

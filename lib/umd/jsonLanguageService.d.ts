@@ -16,8 +16,6 @@ export interface LanguageService {
     doComplete(document: TextDocument, position: Position, doc: JSONDocument): Thenable<CompletionList | null>;
     findDocumentSymbols(document: TextDocument, doc: JSONDocument, context?: DocumentSymbolsContext): SymbolInformation[];
     findDocumentSymbols2(document: TextDocument, doc: JSONDocument, context?: DocumentSymbolsContext): DocumentSymbol[];
-    /** deprecated, use findDocumentColors instead */
-    findColorSymbols(document: TextDocument, doc: JSONDocument): Thenable<Range[]>;
     findDocumentColors(document: TextDocument, doc: JSONDocument, context?: DocumentColorsContext): Thenable<ColorInformation[]>;
     getColorPresentations(document: TextDocument, doc: JSONDocument, color: Color, range: Range): ColorPresentation[];
     doHover(document: TextDocument, position: Position, doc: JSONDocument): Thenable<Hover | null>;
